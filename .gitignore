@@ -9,6 +9,7 @@
 *.dylib
 
 .etc/secrets/*
+.etc/enth
 
 # Test binary, built with `go test -c`
 *.test
