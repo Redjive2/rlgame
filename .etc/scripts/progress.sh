@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# progress.sh: per-package stats for a Go project: files, lines (code, comments,
-# blank), funcs, TODOs and whether each package vets cleanly, plus a bar
-# chart of where the code lives.
+# progress.sh: per-package stats for the Go project in the current
+# directory: files, lines (code, comments, blank), funcs, TODOs and whether
+# each package vets cleanly, plus a bar chart of where the code lives.
 #
-# usage: .scripts/progress.sh [--no-vet]
+# usage: progress.sh [--no-vet]
 
 set -u
 
-root="$(cd "$(dirname "$0")/.." && pwd)"
+root="$PWD"
 vet=1
 [ "${1:-}" = "--no-vet" ] && vet=0
 
@@ -45,7 +45,8 @@ stats() {
 	'
 }
 
-# every directory holding .go files, as "module<TAB>package path"
+# every directory holding .go files, as "module<TAB>package path"; hidden
+# entries are pruned by name, not path, so root itself may sit inside one
 packages=()
 while IFS= read -r mod; do
 	moddir="$(dirname "$mod")"
@@ -53,8 +54,8 @@ while IFS= read -r mod; do
 		pkg="${dir#"$root"}"
 		pkg="${pkg#/}"
 		packages+=("$moddir"$'\t'"${pkg:-.}")
-	done < <(find "$moddir" -name '*.go' -not -path '*/.*' -exec dirname {} \; | sort -u)
-done < <(find "$root" -name go.mod -not -path '*/.*' | sort)
+	done < <(find "$moddir" -mindepth 1 -name '.*' -prune -o -name '*.go' -exec dirname {} \; | sort -u)
+done < <(find "$root" -mindepth 1 -name '.*' -prune -o -name go.mod -print | sort)
 
 if [ ${#packages[@]} -eq 0 ]; then
 	echo "${RED}no Go packages found under $root${END}"
