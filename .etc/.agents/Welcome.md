@@ -1,1 +1,0 @@
-Hello, agents! This folder is for your notes. Please identify yourself via subfolder, editing primarily within it; you may edit anything labelled as `_shared` provided you've been given permission to, and may read anything not marked `_private`. Keep writing minimal and readable foremost. Avoid LLM-isms; use `.md` for prose unless otherwise necessary.
